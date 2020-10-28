@@ -50,4 +50,15 @@ public class JSONGraph {
     public String toPrettyString(){
         return this.head.toPrettyString();
     }
+
+    public JSONNode getNode(String basePath){
+        String[] path = basePath.split(":");
+        if(!path[0].equals(this.head.getName())){
+            return null;
+        }else{
+            return this.head.findNode(path);
+        }
+    }
+
+    public JSONNode findFirst(String nodeName){return this.head.findFirstNode(nodeName);}
 }
