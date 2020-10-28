@@ -11,7 +11,7 @@ public class JSONNodeArray implements JSONNode{
     private final int depth;
     private List<JSONNode> children;
     private JSONNode parent;
-    private GraphForSpotifySkimmer daddy = null;
+    private JSONGraph daddy = null;
 
     public boolean addChild(JSONNode child){
         return this.children.add(child);
@@ -37,13 +37,13 @@ public class JSONNodeArray implements JSONNode{
         this.createSubStructure(content);
     }
 
-    public JSONNodeArray(String name, int depth, JSONArray content, GraphForSpotifySkimmer daddy){
+    public JSONNodeArray(String name, int depth, JSONArray content, JSONGraph daddy){
         this(name,depth);
         this.daddy = daddy;
         this.createSubStructure(content);
     }
 
-    public JSONNodeArray(String name, int depth, JSONArray content, GraphForSpotifySkimmer daddy, JSONNode parent){
+    public JSONNodeArray(String name, int depth, JSONArray content, JSONGraph daddy, JSONNode parent){
         this(name,depth);
         this.daddy = daddy;
         this.parent = parent;
@@ -57,16 +57,21 @@ public class JSONNodeArray implements JSONNode{
                 childType = child.getClass().getSimpleName();
             }catch(Exception ignored){}
             switch (childType) {
-                case "JSONObject" -> {
+                case "JSONObject": {
                     JSONObject jChild = (JSONObject) child;
                     this.addChild(new JSONNodeObject(String.valueOf(content.indexOf(child)), this.getDepth() + 1, jChild, this.daddy,this));
+                    break;
                 }
-                case "JSONArray" -> {
+                case "JSONArray": {
                     JSONArray jChild = (JSONArray) child;
                     this.addChild(new JSONNodeArray(String.valueOf(content.indexOf(child)), this.getDepth() + 1, jChild, this.daddy,this));
+                    break;
                 }
-                case "null" -> this.addChild(new JSONNodeParameter(String.valueOf(content.indexOf(child)), this.getDepth() + 1, "null",this));
-                default -> this.addChild(new JSONNodeParameter(String.valueOf(content.indexOf(child)), this.getDepth() + 1, String.valueOf(child),this));
+                case "null":{
+                    this.addChild(new JSONNodeParameter(String.valueOf(content.indexOf(child)), this.getDepth() + 1, "null",this));
+                    break;
+                }
+                default: this.addChild(new JSONNodeParameter(String.valueOf(content.indexOf(child)), this.getDepth() + 1, String.valueOf(child),this));
             }
         }
     }
